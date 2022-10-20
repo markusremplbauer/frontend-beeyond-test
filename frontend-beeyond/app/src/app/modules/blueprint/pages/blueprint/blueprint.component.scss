@@ -1,0 +1,96 @@
+@import '../../../../../assets/scss/variables.scss';
+@import '../../../../../assets/scss/custom-theme';
+
+.wildcard-fields .wildcard-field-wrapper {
+  margin-top: 1rem;
+  @include flex-column;
+}
+
+.wildcard-label {
+  font-size: 1.5rem;
+}
+
+.stepper-content {
+  flex: 1;
+  @include flex-column;
+}
+
+.selected {
+  background: mat-color($beeyond-light-primary) !important;
+  color: white !important;
+
+  .subtext {
+    color: white !important;
+    font-size: 1rem;
+  }
+}
+
+.selected * {
+  background: mat-color($beeyond-light-primary) !important;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+.example-half-width {
+  width: 49%;
+}
+
+.border {
+  border: 2px solid mat-color($beeyond-light-primary);
+  border-radius: 10px;
+  color: mat-color($beeyond-light-primary);
+  font-size: x-large;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  .subtext {
+    color: dimgrey;
+    overflow-wrap: normal;
+    font-size: 1rem;
+  }
+}
+
+::ng-deep mat-horizontal-stepper,
+.stepper-content {
+  @include flex-column;
+  height: 100%;
+  flex: 1;
+}
+
+::ng-deep .mat-horizontal-content-container {
+  flex: 1;
+  padding: 0 24px !important;
+
+  & .mat-horizontal-stepper-content {
+    height: 100%;
+    @include flex-column;
+  }
+}
+
+::ng-deep .content > * {
+  height: 100% !important; /*Temporary Fix: height: 100vh !important; */
+  width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  .type-wrapper {
+    flex-direction: column;
+    height: inherit !important;
+  }
+}
+
+.type-wrapper {
+  display: inline-flex;
+  height: 50%;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+::ng-deep .mat-stepper-horizontal {
+  background-color: transparent !important;
+}
