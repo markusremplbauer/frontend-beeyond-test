@@ -1,0 +1,17 @@
+@use '../../../../../assets/scss/variables.scss';
+
+:host ::ng-deep .mat-tab-body-wrapper {
+  flex: 1;
+
+  mat-tab-body {
+    margin-top: 1rem;
+
+    .mat-tab-body-content {
+      @include variables.flex-column;
+    }
+  }
+}
+
+mat-tab-group {
+  height: 100%;
+}

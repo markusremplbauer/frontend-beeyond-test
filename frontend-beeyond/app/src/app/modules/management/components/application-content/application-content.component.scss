@@ -1,0 +1,36 @@
+@use '../../../../../assets/scss/variables.scss';
+
+:host {
+  @include variables.flex-column;
+  flex: 1;
+}
+
+$filter-control-width: 95%;
+.filter-controls {
+  display: flex;
+
+  & > * {
+    flex: 1;
+
+    &:not(:first-child) {
+      margin-left: 1rem;
+    }
+  }
+}
+
+.applications-table {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.selected-row {
+  background-color: #f1f1f1;
+}
+
+.next-button {
+  width: 5rem;
+}
+
+.update-button {
+  margin-right: 1rem;
+}

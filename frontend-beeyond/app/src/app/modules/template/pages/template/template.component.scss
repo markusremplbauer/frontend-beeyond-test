@@ -1,0 +1,26 @@
+@import '../../../../../assets/scss/variables.scss';
+
+.control-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.search-field {
+  width: 90%;
+  display: inline-block;
+
+  $search-font: 18px;
+  input {
+    font-size: $search-font;
+  }
+
+  button mat-icon {
+    font-size: $search-font + 8px;
+  }
+}
+
+.template-list {
+  max-height: 84%;
+  overflow: auto;
+}

@@ -1,0 +1,14 @@
+<h2>Field Values</h2>
+
+<div *ngFor="let data of fieldData; let i = index">
+  <div class="list-item item-hover" matRipple>
+    <div class="list-item-text">
+      {{ data.label }}
+    </div>
+    <div class="list-item-text right">
+      {{ data.value }}
+    </div>
+  </div>
+
+  <div class="list-item-divider" *ngIf="i !== fieldData.length - 1"></div>
+</div>
