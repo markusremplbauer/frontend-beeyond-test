@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AUTO_STYLE, state, style, trigger } from '@angular/animations';
-import { SidenavToggleService } from '../services/sidenav-toggle.service';
+import { SidenavService } from '../services/sidenav.service';
 import { AuthenticationService } from '../authentification/authentication.service';
 import { config } from '../config/user-role.config';
 import { BackendApiService } from '../services/backend-api.service';
 import { ThemeService } from '../services/theme.service';
 import { Notification } from '../../shared/models/notification.model';
 import { NotificationStatus } from '../../shared/models/notification-status.enum';
+import { MediaMatcher } from '@angular/cdk/layout';
+import { BaseComponent } from '../services/base.component';
 
 @Component({
   selector: 'app-side-navigation',
@@ -19,17 +21,17 @@ import { NotificationStatus } from '../../shared/models/notification-status.enum
     ])
   ]
 })
-export class SideNavigationComponent implements OnInit {
-  theme: boolean;
+export class SideNavigationComponent extends BaseComponent implements OnInit {
+  isDarkTheme: boolean;
   agenda = [
     { name: 'Blueprint', icon: 'list_alt', router: '/blueprint' },
     { name: 'Profile', icon: 'account_circle', router: '/profile' },
-    {
+    /*{
       name: 'Accounting',
       icon: 'account_balance',
       router: '/accounting',
       requiredRoles: [config.adminRole]
-    },
+    },*/
     {
       name: 'Management',
       icon: 'desktop_windows',
@@ -55,17 +57,24 @@ export class SideNavigationComponent implements OnInit {
       requiredRoles: [config.adminRole]
     }
   ];
+
   actualAgenda = [];
   notifications: Notification[] = [];
-  notificationStatus = NotificationStatus;
+  lastAccess = new Date(Number(localStorage.getItem('lastAccess')));
 
   constructor(
-    public sidenavToggleService: SidenavToggleService,
+    public sidenavService: SidenavService,
     public authenticationService: AuthenticationService,
     public backendApiService: BackendApiService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher
   ) {
-    this.theme = themeService.theme.value;
+    super(changeDetectorRef, media);
+    this.isDarkTheme = themeService.isDarkTheme.value;
+    this.changes.subscribe(() => {
+      this.sidenavService.minimized.next(!this.mobileQuery?.matches);
+    });
   }
 
   ngOnInit(): void {
@@ -80,15 +89,21 @@ export class SideNavigationComponent implements OnInit {
           }
           return found;
         });
-        this.backendApiService
-          .getNotifications()
-          .subscribe(notifications => (this.notifications = notifications));
+        this.backendApiService.getNotifications().subscribe(notifications => {
+          // Only show last 3 notifications in the side nav -> the rest of the notifications is available in a separate page
+          this.notifications = notifications
+            .sort((n1, n2) => new Date(n1.createdAt).getTime() - new Date(n2.createdAt).getTime())
+            .reverse()
+            .slice(0, 3);
+          this.notifications.forEach(n => (n.createdAt = new Date(n.createdAt)));
+        });
       }
     });
   }
 
   toggleTheme() {
-    this.themeService.theme.next(this.theme);
+    window.localStorage.setItem('isDarkTheme', String(this.isDarkTheme));
+    this.themeService.isDarkTheme.next(this.isDarkTheme);
   }
 
   logOut(): void {

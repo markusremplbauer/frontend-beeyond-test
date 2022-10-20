@@ -9,6 +9,7 @@ import { ConfigService } from '../services/config.service';
 export class AuthenticationService {
   username = new BehaviorSubject<string>('');
   roles = new BehaviorSubject<string[]>([]);
+  firstname = new BehaviorSubject<string[]>([]);
   oidcLoaded = new BehaviorSubject<boolean>(false);
 
   constructor(private oAuthService: OAuthService, private configService: ConfigService) {}
@@ -20,7 +21,7 @@ export class AuthenticationService {
   async initializeLogin(): Promise<void> {
     this.oAuthService.configure({
       issuer: this.configService.config.keycloakUrl,
-      redirectUri: window.location.origin,
+      redirectUri: this.configService.config.redirectUri,
       clientId: 'beeyond-spa',
       responseType: 'code',
       scope: 'offline_access',
@@ -34,8 +35,11 @@ export class AuthenticationService {
       this.oAuthService.initLoginFlow();
     } else {
       this.oAuthService.setupAutomaticSilentRefresh();
-      const profile = await this.oAuthService.loadUserProfile();
-      this.username.next(profile.preferred_username);
+      const profile: any = await this.oAuthService.loadUserProfile();
+      // TODO: fix this
+      // this.username.next(profile.info.preferred_username);
+      const claims: any = this.oAuthService.getIdentityClaims();
+      this.firstname.next(claims.given_name);
       this.roles.next(this.parseJwt(this.oAuthService.getAccessToken()).realm_access.roles);
       this.oidcLoaded.next(true);
     }
