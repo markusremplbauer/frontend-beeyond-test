@@ -10,6 +10,8 @@ import { ApplicationRange } from '../../../../shared/models/application-range.mo
 
 declare function constrainedEditor(editor: any): any;
 
+declare let monaco: any;
+
 @Component({
   selector: 'app-application-review',
   templateUrl: './application-review.component.html',
