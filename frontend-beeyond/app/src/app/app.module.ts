@@ -11,19 +11,21 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ConfigService } from './core/services/config.service';
 import { AuthenticationService } from './core/authentification/authentication.service';
 import { MatCardModule } from '@angular/material/card';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    CoreModule,
-    MonacoEditorModule.forRoot(),
-    MatProgressBarModule,
-    MatCardModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        HttpClientModule,
+        CoreModule,
+        MonacoEditorModule.forRoot(),
+        MatProgressBarModule,
+        MatCardModule,
+        MatProgressSpinnerModule
+    ],
   providers: [
     {
       provide: APP_INITIALIZER,
