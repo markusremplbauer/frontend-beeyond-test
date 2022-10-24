@@ -6,7 +6,12 @@ import { CustomApplication } from 'src/app/shared/models/custom.application.mode
 import { TemplateApplication } from 'src/app/shared/models/template.application.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Template } from '../../../../shared/models/template.model';
-import { ApplicationRange } from '../../../../shared/models/application-range.model';
+import { ThemeService } from '../../../../core/services/theme.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ApplicationDenyDialogComponent } from '../../components/application-deny-dialog/application-deny-dialog.component';
+import { Observable } from 'rxjs';
+import { FormControl, Validators } from '@angular/forms';
+import { ConfigService } from '../../../../core/services/config.service';
 
 declare function constrainedEditor(editor: any): any;
 
@@ -19,6 +24,7 @@ declare let monaco: any;
 })
 export class ApplicationReviewComponent implements OnInit {
   customApplication: CustomApplication | null;
+  customForm: FormControl;
   templateApplication: TemplateApplication | null;
 
   isPending = false;
@@ -26,6 +32,11 @@ export class ApplicationReviewComponent implements OnInit {
   isDenied = false;
   isManagement: boolean;
   redirectPath: string[];
+  message: string;
+
+  running: ApplicationStatus = ApplicationStatus.RUNNING;
+  stopped: ApplicationStatus = ApplicationStatus.STOPPED;
+  denied: ApplicationStatus = ApplicationStatus.DENIED;
 
   template: Template;
 
@@ -35,15 +46,30 @@ export class ApplicationReviewComponent implements OnInit {
     language: 'yaml',
     scrollBeyondLastLine: false,
     readOnly: true,
-    automaticLayout: true
+    automaticLayout: true,
+    theme: this.themeService.isDarkTheme.value ? 'vs-dark' : 'vs-light'
   };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private backendApiService: BackendApiService,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private themeService: ThemeService,
+    public configService: ConfigService,
+    public dialog: MatDialog
+  ) {
+    this.themeService.isDarkTheme.subscribe(value => {
+      this.monacoEditorOptions = {
+        ...this.monacoEditorOptions,
+        theme: value ? 'vs-dark' : 'vs-light'
+      };
+    });
+  }
+
+  public get application(): CustomApplication | TemplateApplication {
+    return this.customApplication || this.templateApplication;
+  }
 
   isReadOnly() {
     if (this.isManagement || !this.customApplication) {
@@ -52,6 +78,7 @@ export class ApplicationReviewComponent implements OnInit {
     }
     if (
       this.customApplication.status === ApplicationStatus.DENIED ||
+      this.customApplication.status === ApplicationStatus.STOPPED ||
       this.customApplication.status === ApplicationStatus.PENDING
     ) {
       this.monacoEditorOptions.readOnly = false;
@@ -63,8 +90,8 @@ export class ApplicationReviewComponent implements OnInit {
   ngOnInit(): void {
     this.isManagement = this.route.snapshot.data.isManagement;
     this.redirectPath = this.route.snapshot.data.redirectPath;
-    const application: CustomApplication | TemplateApplication = this.route.snapshot.data
-      .application;
+    const application: CustomApplication | TemplateApplication =
+      this.route.snapshot.data.application;
     this.isPending = application.status === ApplicationStatus.PENDING;
     this.isRunning = application.status === ApplicationStatus.RUNNING;
     this.isDenied = application.status === ApplicationStatus.DENIED;
@@ -73,6 +100,7 @@ export class ApplicationReviewComponent implements OnInit {
       this.templateApplication = application;
     } else {
       this.customApplication = application;
+      this.customForm = new FormControl(this.customApplication.content, Validators.required);
     }
 
     if (this.templateApplication) {
@@ -92,39 +120,6 @@ export class ApplicationReviewComponent implements OnInit {
               description
             });
           }
-
-          const templateContent = this.template.content;
-          const lines = templateContent.split('\n');
-
-          let content = '';
-          const ranges: ApplicationRange[] = [];
-          const wildcardRegex = /%(.+?)%/g;
-
-          for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            let match: RegExpExecArray;
-
-            while ((match = wildcardRegex.exec(line)) != null) {
-              const { wildcard, label, value, description } = this.fieldData.find(
-                data => data.wildcard === match[0].replace(/%/g, '')
-              );
-              line = line.replace(`%${wildcard}%`, value);
-
-              ranges.push({
-                lineNumber: i + 1,
-                startColumn: match.index + 1,
-                endColumn: match.index + 1 + value.length,
-                wildcard,
-                label,
-                description
-              });
-            }
-
-            content += line + '\n';
-          }
-
-          content = content.substring(0, content.length - 1);
-          this.template.content = content;
         });
     }
 
@@ -162,8 +157,18 @@ export class ApplicationReviewComponent implements OnInit {
   }
 
   deny(): void {
-    this.backendApiService.denyApplicationById(this.application.id).subscribe(() => {
-      this.router.navigate(this.redirectPath);
+    const dialogRef = this.dialog.open(ApplicationDenyDialogComponent, {
+      width: '600px',
+      height: '500px',
+      data: { message: this.message }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.backendApiService.denyApplicationById(this.application.id, result).subscribe(() => {
+          this.router.navigate(this.redirectPath);
+        });
+      }
     });
   }
 
@@ -173,27 +178,56 @@ export class ApplicationReviewComponent implements OnInit {
     });
   }
 
-  finish(): void {
-    this.backendApiService.finishApplicationById(this.application.id).subscribe(() => {
-      this.router.navigate(this.redirectPath);
-    });
+  request(): void {
+    this.save().subscribe(() =>
+      this.backendApiService.requestApplicationById(this.application.id).subscribe(() => {
+        this.router.navigate(['/profile']).then(navigated => {
+          if (navigated) {
+            this.snackBar.open(
+              'Your application was sent will be reviewed as soon as possible',
+              'close',
+              {
+                duration: 2000,
+                panelClass: ['mat-drawer-container']
+              }
+            );
+          }
+        });
+      })
+    );
   }
 
-  request(): void {
-    this.backendApiService.requestApplicationById(this.application.id).subscribe(() => {
-      this.router.navigate(['/profile']).then(navigated => {
-        if (navigated) {
-          this.snackBar.open(
-            'Your application was sent will be reviewed as soon as possible',
-            'close',
-            { duration: undefined }
-          );
-        }
+  stop(): void {
+    this.backendApiService.stopApplicationById(this.application.id).subscribe(() => {
+      const currentUrl = this.router.url;
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([currentUrl]);
       });
     });
   }
 
-  public get application(): CustomApplication | TemplateApplication {
-    return this.customApplication || this.templateApplication;
+  finish(): void {
+    //TODO Add dialog question, do you really wanna finish? SlEm
+    this.backendApiService.finishApplicationById(this.application.id).subscribe(() => {
+      const currentUrl = this.router.url;
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([currentUrl]);
+      });
+    });
+  }
+
+  start(): void {
+    this.backendApiService.startApplicationById(this.application.id).subscribe(() => {
+      const currentUrl = this.router.url;
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([currentUrl]);
+      });
+    });
+  }
+
+  save(): Observable<void> {
+    return this.backendApiService.saveApplicationById(this.application.id, {
+      content: this.customForm.value
+    });
   }
 }

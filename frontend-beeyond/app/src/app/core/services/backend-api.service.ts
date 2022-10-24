@@ -48,8 +48,8 @@ export class BackendApiService {
     return this.http.delete<void>(`${this.backendApiUrl}/template/${id}`);
   }
 
-  getApplications(): Observable<Application[]> {
-    return this.http.get<Application[]>(`${this.backendApiUrl}/application`);
+  getApplications(all: boolean): Observable<Application[]> {
+    return this.http.get<Application[]>(`${this.backendApiUrl}/application?all=${all ? 1 : 0}`);
   }
 
   getApplicationById(id: number): Observable<TemplateApplication | CustomApplication> {
@@ -66,8 +66,8 @@ export class BackendApiService {
     return this.http.patch<void>(`${this.backendApiUrl}/application/start/${id}`, null);
   }
 
-  denyApplicationById(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.backendApiUrl}/application/deny/${id}`, null);
+  denyApplicationById(id: number, message: string): Observable<void> {
+    return this.http.patch<void>(`${this.backendApiUrl}/application/deny/${id}`, { message });
   }
 
   stopApplicationById(id: number): Observable<void> {
@@ -80,6 +80,10 @@ export class BackendApiService {
 
   requestApplicationById(id: number): Observable<void> {
     return this.http.patch<void>(`${this.backendApiUrl}/application/request/${id}`, null);
+  }
+
+  saveApplicationById(id: number, application: any): Observable<void> {
+    return this.http.patch<void>(`${this.backendApiUrl}/application/${id}`, application);
   }
 
   getAllNamespaces(): Observable<Namespace[]> {
@@ -99,6 +103,8 @@ export class BackendApiService {
   }
 
   getNotifications(): Observable<Notification[]> {
+    // Set lastAccess to be able to visibly show that new notifications are available
+    window.localStorage.setItem('lastAccess', new Date().getTime().toString());
     return this.http.get<Notification[]>(`${this.backendApiUrl}/notification`);
   }
 }

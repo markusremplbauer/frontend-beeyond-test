@@ -58,7 +58,7 @@
   </ng-container>
 
   <!-- Started -->
-  <ng-container matColumnDef="startedAt">
+  <ng-container matColumnDef="startedAt" class="hide-mobile">
     <mat-header-cell *matHeaderCellDef>Started</mat-header-cell>
     <mat-cell mat-cell *matCellDef="let application">
       {{ application.startedAt | date: 'short' }}
@@ -66,44 +66,10 @@
   </ng-container>
 
   <!-- Finished -->
-  <ng-container matColumnDef="finishedAt">
+  <ng-container matColumnDef="finishedAt" class="hide-mobile">
     <mat-header-cell *matHeaderCellDef>Finished</mat-header-cell>
     <mat-cell mat-cell *matCellDef="let application">
       {{ application.finishedAt | date: 'short' }}
-    </mat-cell>
-  </ng-container>
-
-  <!--Stop Button-->
-  <ng-container matColumnDef="buttons">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell mat-cell *matCellDef="let application">
-      <button
-        mat-flat-button
-        color="primary"
-        [disabled]="application.status != stopped"
-        (click)="start(application.id)"
-        class="update-button"
-      >
-        Start
-      </button>
-      <button
-        mat-flat-button
-        color="primary"
-        [disabled]="application.status != running"
-        (click)="stop(application.id)"
-        class="update-button"
-      >
-        Stop
-      </button>
-      <button
-        mat-flat-button
-        color="warn"
-        [disabled]="application.status != running && application.status != stopped"
-        (click)="finish(application.id)"
-        class="update-button"
-      >
-        Finish
-      </button>
     </mat-cell>
   </ng-container>
 
@@ -121,7 +87,7 @@
     mat-flat-button
     color="primary"
     class="next-button"
-    [disabled]="selectedRow == null"
+    [disabled]="selectedRow === null"
     [routerLink]="['review', applicationDataSource.data[selectedRow]?.id]"
   >
     Next

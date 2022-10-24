@@ -20,8 +20,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApplicationContentComponent } from './components/application-content/application-content.component';
+import { ApplicationDenyDialogComponent } from './components/application-deny-dialog/application-deny-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ApplicationAttributesComponent } from './components/application-attributes/application-attributes.component';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { ApplicationAttributesComponent } from './components/application-attribu
     VariableListComponent,
     ApplicationPreviewDialogComponent,
     ApplicationContentComponent,
+    ApplicationDenyDialogComponent,
     ApplicationAttributesComponent
   ],
   imports: [
@@ -50,7 +53,8 @@ import { ApplicationAttributesComponent } from './components/application-attribu
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
-    MatTabsModule
+    MatTabsModule,
+    ClipboardModule
   ],
   exports: [ApplicationContentComponent, ApplicationReviewComponent]
 })
