@@ -13,8 +13,13 @@
   align-items: center;
   font-size: 26px;
   margin-right: auto;
+  width: 100%;
 }
 
 .no-outline {
   outline: none;
+}
+
+.mat-icon.mat-icon-inline {
+  width: 24px;
 }
