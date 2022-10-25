@@ -37,8 +37,23 @@
           <mat-icon style="margin: 5px">file_copy</mat-icon>
         </div>
       </div>
+      <!--      <div style="background:lightgray; height: 100%; margin-top: 10px; overflow: auto; "-->
+      <!--           *ngIf="blueprintType !== 'Template'">-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--        <p>Hi</p>-->
+      <!--      </div>-->
       <app-template-list
-        style="margin-top: 10px"
+        style="height:100%; margin-top: 10px; overflow: auto;"
         *ngIf="blueprintType === 'Template'"
         [templates]="templates"
         (templateIdEvent)="setTemplateId($event)"
@@ -75,7 +90,7 @@
         class="monaco-editor monaco-editor-border"
         formControlName="content"
         style="height: 100%"
-        >´
+      >´
       </ngx-monaco-editor>
     </div>
 
@@ -97,7 +112,7 @@
             <ng-container [formGroupName]="i">
               <mat-form-field style="width: 100%" class="full-width wildcard">
                 <mat-label>{{ field.label }}</mat-label>
-                <input matInput formControlName="value" />
+                <input matInput formControlName="value"/>
                 <mat-error *ngIf="templateForm.get('fieldValues').invalid"></mat-error>
               </mat-form-field>
               <mat-icon
@@ -105,7 +120,7 @@
                   field.description ? field.description : 'No description available!'
                 }}"
                 matTooltipPosition="left"
-                >help_outline
+              >help_outline
               </mat-icon>
             </ng-container>
           </div>
@@ -135,7 +150,7 @@
 
   <mat-step *ngIf="services.length !== 0">
     <ng-template matStepLabel
-      ><span *ngIf="!mobileQuery.matches">Choose services</span></ng-template
+    ><span *ngIf="!mobileQuery.matches">Choose services</span></ng-template
     >
     <mat-card-title>Ingress creation</mat-card-title>
     <mat-card-subtitle>Select the services you want an ingress for</mat-card-subtitle>
@@ -157,50 +172,74 @@
 
   <mat-step [stepControl]="thirdFormGroup">
     <ng-template matStepLabel
-      ><span *ngIf="!mobileQuery.matches">Fill out information</span></ng-template
+    ><span *ngIf="!mobileQuery.matches">Fill out information</span></ng-template
     >
 
-    <div [formGroup]="thirdFormGroup" class="stepper-content filter-controls">
-      <div>
-        <mat-form-field class="example-full-width">
-          <mat-label>Description</mat-label>
-          <input matInput formControlName="note" />
-        </mat-form-field>
-      </div>
+    <!--    <div [formGroup]="thirdFormGroup" class="stepper-content filter-controls">-->
+    <!--      <div>-->
+    <!--        <mat-form-field class="example-full-width">-->
+    <!--          <mat-label>Description</mat-label>-->
+    <!--          <input matInput formControlName="note" />-->
+    <!--        </mat-form-field>-->
+    <!--      </div>-->
 
-      <div style="display: inline-flex">
-        <mat-form-field style="flex-grow: 1; margin-right: 1em">
-          <mat-label>Class</mat-label>
-          <input matInput formControlName="class" />
-        </mat-form-field>
+    <!--      <div style="display: inline-flex">-->
+    <!--        <mat-form-field style="flex-grow: 1; margin-right: 1em">-->
+    <!--          <mat-label>Class</mat-label>-->
+    <!--          <input matInput formControlName="class" />-->
+    <!--        </mat-form-field>-->
 
-        <mat-form-field style="flex-grow: 1; margin-right: 1em">
-          <mat-label>Namespace</mat-label>
-          <mat-select formControlName="namespace">
-            <mat-option *ngFor="let namespace of namespaces" [value]="namespace.namespace">
-              {{ namespace.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!--        <mat-form-field style="flex-grow: 1; margin-right: 1em">-->
+    <!--          <mat-label>Namespace</mat-label>-->
+    <!--          <mat-select formControlName="namespace">-->
+    <!--            <mat-option *ngFor="let namespace of namespaces" [value]="namespace.namespace">-->
+    <!--              {{ namespace.label }}-->
+    <!--            </mat-option>-->
+    <!--          </mat-select>-->
+    <!--        </mat-form-field>-->
 
-        <mat-form-field style="flex-grow: 1">
-          <mat-label>To</mat-label>
-          <input formControlName="to" matInput [matDatepicker]="picker" />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-      </div>
+    <!--        <mat-form-field style="flex-grow: 1">-->
+    <!--          <mat-label>To</mat-label>-->
+    <!--          <input formControlName="to" matInput [matDatepicker]="picker" />-->
+    <!--          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
+    <!--          <mat-datepicker #picker></mat-datepicker>-->
+    <!--        </mat-form-field>-->
+    <!--      </div>-->
 
-      <div>
-        <mat-form-field class="example-full-width">
-          <mat-label>Purpose</mat-label>
-          <input matInput formControlName="purpose" />
-        </mat-form-field>
-      </div>
-    </div>
+    <!--      <div>-->
+    <!--        <mat-form-field class="example-full-width">-->
+    <!--          <mat-label>Purpose</mat-label>-->
+    <!--          <input matInput formControlName="purpose" />-->
+    <!--        </mat-form-field>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
+    <app-application-preview  *ngIf="(blueprintType === 'Custom' && secondFormGroup.valid) ||
+        (blueprintType === 'Template' && templateForm && templateForm.valid)"
+                             style="height: 100%" [data]="getPreviewData()"></app-application-preview>
+
+
 
     <div class="button-container">
       <button mat-flat-button color="primary" matStepperPrevious>Previous</button>
+      <button
+        mat-raised-button
+        color="primary"
+        [cdkCopyToClipboard]="getContent()"
+        *ngIf="(blueprintType === 'Custom' && secondFormGroup.valid) ||
+        (blueprintType === 'Template' && templateForm && templateForm.valid)"
+      >
+        <mat-icon>file_copy</mat-icon>
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [cdkCopyToClipboard]="templateData.content"
+        disabled
+        *ngIf="(blueprintType === 'Template' && templateForm && templateForm.valid)"
+      >
+        <mat-icon>cloud_download</mat-icon>
+      </button>
       <button
         mat-flat-button
         color="primary"

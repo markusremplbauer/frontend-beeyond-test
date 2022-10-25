@@ -12,8 +12,8 @@ import { BaseComponent } from '../../../../core/services/base.component';
 import { ThemeService } from '../../../../core/services/theme.service';
 import * as yaml from 'js-yaml';
 import { ApplicationRange } from '../../../../shared/models/application-range.model';
-// eslint-disable-next-line max-len
-import { ApplicationPreviewDialogComponent } from '../../../management/components/application-preview-dialog/application-preview-dialog.component';
+import { ApplicationPreviewDialogComponent }
+  from '../../../management/components/application-preview-dialog/application-preview-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -33,13 +33,28 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
   templateId: number = null;
   templateForm: FormGroup;
   services = [];
-
   monacoOptions = {
     language: 'yaml',
     scrollBeyondLastLine: false,
     theme: this.themeService.isDarkTheme.value ? 'vs-dark' : 'vs-light',
     automaticLayout: true
   };
+
+  private _templateData: {
+    content: string;
+    ranges: ApplicationRange[];
+  };
+
+  get templateData(): { content: string; ranges: ApplicationRange[] } {
+    this.refreshTemplateData();
+    // eslint-disable-next-line no-underscore-dangle
+    return this._templateData;
+  }
+
+  set templateData(value: { content: string; ranges: ApplicationRange[] }) {
+    // eslint-disable-next-line no-underscore-dangle
+    this._templateData = value;
+  }
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -71,7 +86,7 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
       content: ['', Validators.required]
     });
 
-    this.secondFormGroup.controls.content.valueChanges.subscribe(value => {
+    this.secondFormGroup.controls.content.valueChanges.subscribe(() => {
       this.loadServices();
     });
 
@@ -103,7 +118,7 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
 
     const temp: any[] = yaml.loadAll(this.getContent());
     temp.map((c: any) => {
-      if (c.kind === 'Service' && this.services.find(s => s.name === c.metadata.name).selected) {
+      if (c.kind === 'Service' && this.services.find(s => s.name === c.metadata.name)?.selected) {
         if (!c.metadata.labels) {
           c.metadata.labels = {};
         }
@@ -217,7 +232,7 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
   }
 
   getContent() {
-    let content = '';
+    let content: string;
     if (this.blueprintType === 'Template') {
       const regex = /%([\w-]+)%/g;
       let temp = this.template.content;
@@ -274,7 +289,23 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
   }
 
   openDialog(): void {
-    const templateContent = this.template.content;
+    this.dialog.open(ApplicationPreviewDialogComponent, {
+      data: this.templateData,
+      width: '100%',
+      height: '80%',
+      autoFocus: false
+    });
+  }
+
+  getPreviewData() {
+    if (this.blueprintType === 'Template') {
+      return this.templateData;
+    }
+    return {content: this.getContent(), ranges: []};
+  }
+
+  public refreshTemplateData() {
+    const templateContent = this.template?.content;
     const lines = templateContent.split('\n');
 
     let content = '';
@@ -311,12 +342,8 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
     // Remove \n
     content = content.substring(0, content.length - 1);
 
-    this.dialog.open(ApplicationPreviewDialogComponent, {
-      data: { content, ranges },
-      width: '100%',
-      height: '80%',
-      autoFocus: false
-    });
+    // eslint-disable-next-line no-underscore-dangle
+    this._templateData = { content, ranges };
   }
 
   private refreshNamespaces(): void {
@@ -330,4 +357,5 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
       this.thirdFormGroup.controls.namespace.setValue(defaultNamespace.namespace);
     });
   }
+
 }

@@ -20,33 +20,35 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [BlueprintComponent],
-  imports: [
-    CommonModule,
-    BlueprintRoutingModule,
-    MatCardModule,
-    MatDividerModule,
-    MatListModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTabsModule,
-    FormsModule,
-    SharedModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
-    MonacoEditorModule,
-    MatSelectModule,
-    MatStepperModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatCheckboxModule,
-    MatDialogModule
-  ]
+    imports: [
+        CommonModule,
+        BlueprintRoutingModule,
+        MatCardModule,
+        MatDividerModule,
+        MatListModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatTabsModule,
+        FormsModule,
+        SharedModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        MonacoEditorModule,
+        MatSelectModule,
+        MatStepperModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatCheckboxModule,
+        MatDialogModule,
+        ClipboardModule
+    ]
 })
 export class BlueprintModule {}
