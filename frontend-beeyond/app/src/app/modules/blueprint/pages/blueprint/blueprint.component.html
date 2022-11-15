@@ -37,21 +37,7 @@
           <mat-icon style="margin: 5px">file_copy</mat-icon>
         </div>
       </div>
-      <!--      <div style="background:lightgray; height: 100%; margin-top: 10px; overflow: auto; "-->
-      <!--           *ngIf="blueprintType !== 'Template'">-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--        <p>Hi</p>-->
-      <!--      </div>-->
+
       <app-template-list
         style="margin-top: 10px; overflow: auto;"
         *ngIf="blueprintType === 'Template'"
@@ -227,10 +213,9 @@
     <!--      </div>-->
     <!--    </div>-->
 
-    <app-application-preview  *ngIf="(blueprintType === 'Custom' && secondFormGroup.valid) ||
+    <app-application-preview *ngIf="(blueprintType === 'Custom' && secondFormGroup.valid) ||
         (blueprintType === 'Template' && templateForm && templateForm.valid)"
                              style="height: 100%" [data]="getPreviewData()"></app-application-preview>
-
 
 
     <div class="button-container">
@@ -264,3 +249,4 @@
     </div>
   </mat-step>
 </mat-horizontal-stepper>
+

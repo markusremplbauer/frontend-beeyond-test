@@ -30,13 +30,13 @@
   background: mat-color($beeyond-light-primary) !important;
 }
 
-.example-full-width {
-  width: 100%;
-}
-
-.example-half-width {
-  width: 49%;
-}
+//.example-full-width {
+//  width: 100%;
+//}
+//
+//.example-half-width {
+//  width: 49%;
+//}
 
 .border {
   border: 2px solid mat-color($beeyond-light-primary);
@@ -59,7 +59,7 @@
 ::ng-deep mat-horizontal-stepper,
 .stepper-content {
   @include flex-column;
-  height: 50%;
+  height: 300px;
   flex: 1;
 }
 
@@ -87,10 +87,11 @@
 
 .type-wrapper {
   display: inline-flex;
-  height: 50%;
   justify-content: space-between;
   gap: 10px;
 }
+
+
 
 ::ng-deep .mat-stepper-horizontal {
   background-color: transparent !important;
