@@ -220,8 +220,7 @@
       <button
         mat-raised-button
         color="primary"
-        [cdkCopyToClipboard]="templateData.content"
-        disabled
+        (click)="downloadFile()"
         *ngIf="(blueprintType === 'Template' && templateForm && templateForm.valid)"
       >
         <mat-icon>cloud_download</mat-icon>

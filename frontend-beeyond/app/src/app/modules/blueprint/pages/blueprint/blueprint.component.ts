@@ -111,6 +111,21 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
     }
   }
 
+  downloadFile() {
+    const content = this.getContent();
+    const file = new Blob([content], {type: '.yaml'});
+
+    const url = window.URL.createObjectURL(file);
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.setAttribute('style', 'display: none');
+    a.href = url;
+    a.download = 'deployment.yaml';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
+
   createBlueprint() {
     let blueprint = {
       ...this.thirdFormGroup.value
@@ -357,5 +372,4 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
       this.thirdFormGroup.controls.namespace.setValue(defaultNamespace.namespace);
     });
   }
-
 }
