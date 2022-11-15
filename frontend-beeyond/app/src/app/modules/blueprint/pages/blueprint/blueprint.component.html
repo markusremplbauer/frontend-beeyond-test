@@ -45,26 +45,14 @@
         (templateIdEvent)="setTemplateId($event)"
       >
       </app-template-list>
-
-      <div *ngIf="blueprintType !== 'Custom'" class="button-container">
-        <button
-          mat-flat-button
-          color="primary"
-          matStepperNext
-          [disabled]="(blueprintType === 'Template' && templateId === null) || blueprintType === ''"
-          (click)="loadTemplate()"
-        >
-          Next
-        </button>
-      </div>
-
     </div>
 
-    <div *ngIf="blueprintType === 'Custom'" class="button-container">
+    <div class="button-container">
       <button
         mat-flat-button
         color="primary"
         matStepperNext
+        [disabled]="(blueprintType === 'Template' && templateId === null) || blueprintType === ''"
         (click)="loadTemplate()"
       >
         Next
