@@ -53,25 +53,38 @@
       <!--        <p>Hi</p>-->
       <!--      </div>-->
       <app-template-list
-        style="height:100%; margin-top: 10px; overflow: auto;"
+        style="margin-top: 10px; overflow: auto;"
         *ngIf="blueprintType === 'Template'"
         [templates]="templates"
         (templateIdEvent)="setTemplateId($event)"
       >
       </app-template-list>
+
+      <div *ngIf="blueprintType !== 'Custom'" class="button-container">
+        <button
+          mat-flat-button
+          color="primary"
+          matStepperNext
+          [disabled]="(blueprintType === 'Template' && templateId === null) || blueprintType === ''"
+          (click)="loadTemplate()"
+        >
+          Next
+        </button>
+      </div>
+
     </div>
 
-    <div class="button-container">
+    <div *ngIf="blueprintType === 'Custom'" class="button-container">
       <button
         mat-flat-button
         color="primary"
         matStepperNext
-        [disabled]="(blueprintType === 'Template' && templateId === null) || blueprintType === ''"
         (click)="loadTemplate()"
       >
         Next
       </button>
     </div>
+
   </mat-step>
 
   <mat-step
