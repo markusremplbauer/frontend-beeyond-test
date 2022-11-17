@@ -291,9 +291,6 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
     });
   }
 
-  updateColor(val: string) {
-    this.blueprintType = val;
-  }
 
   updateBlueprintType(val: string) {
     if (val === 'Custom') {
@@ -303,14 +300,14 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
     this.services = [];
   }
 
-  openDialog(): void {
-    this.dialog.open(ApplicationPreviewDialogComponent, {
-      data: this.templateData,
-      width: '100%',
-      height: '80%',
-      autoFocus: false
-    });
-  }
+  // openDialog(): void {
+  //   this.dialog.open(ApplicationPreviewDialogComponent, {
+  //     data: this.templateData,
+  //     width: '100%',
+  //     height: '80%',
+  //     autoFocus: false
+  //   });
+  // }
 
   getPreviewData() {
     if (this.blueprintType === 'Template') {
@@ -359,6 +356,17 @@ export class BlueprintComponent extends BaseComponent implements OnInit {
 
     // eslint-disable-next-line no-underscore-dangle
     this._templateData = { content, ranges };
+  }
+
+  public copyToClipboard() {
+    this.snackBar.open(
+      'Your Deployment has been copied to the clipboard!',
+      'close',
+      {
+        duration: 1500,
+        panelClass: ['mat-drawer-container']
+      }
+    );
   }
 
   private refreshNamespaces(): void {
